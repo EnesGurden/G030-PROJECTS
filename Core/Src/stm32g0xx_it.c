@@ -124,9 +124,7 @@ void Flash_write()
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-extern TIM_HandleTypeDef htim1;
-extern TIM_HandleTypeDef htim3;
-extern UART_HandleTypeDef huart2;
+
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -210,81 +208,6 @@ void SysTick_Handler(void)
 /* For the available peripheral interrupt handler names,                      */
 /* please refer to the startup file (startup_stm32g0xx.s).                    */
 /******************************************************************************/
-
-/**
-  * @brief This function handles TIM1 break, update, trigger and commutation interrupts.
-  */
-void TIM1_BRK_UP_TRG_COM_IRQHandler(void)
-{
-  /* USER CODE BEGIN TIM1_BRK_UP_TRG_COM_IRQn 0 */
-
-
-  /* USER CODE END TIM1_BRK_UP_TRG_COM_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim1);
-  /* USER CODE BEGIN TIM1_BRK_UP_TRG_COM_IRQn 1 */
-
-  /* USER CODE END TIM1_BRK_UP_TRG_COM_IRQn 1 */
-}
-
-/**
-  * @brief This function handles TIM3 global interrupt.
-  */
-void TIM3_IRQHandler(void)
-{
-  /* USER CODE BEGIN TIM3_IRQn 0 */
-//	static int a=0;
-//	a++;
-//	if(a > 2 )
-//	{
-//		tempSettings = *settingPage;
-//		tempSettings.appByte = 0xff;
-//		tempSettings.crc = 62;
-//		tempSettings.size=6262;
-//		tempSettings.validApp=1;
-//		Flash_write(1);
-//		a=0;
-//	}
-  /* USER CODE END TIM3_IRQn 0 */
-  HAL_TIM_IRQHandler(&htim3);
-  /* USER CODE BEGIN TIM3_IRQn 1 */
-
-  /* USER CODE END TIM3_IRQn 1 */
-}
-
-/**
-  * @brief This function handles USART2 global interrupt / USART2 wake-up interrupt through EXTI line 26.
-  */
-void USART2_IRQHandler(void)
-{
-  /* USER CODE BEGIN USART2_IRQn 0 */
-	if (USART2->ISR & USART_ISR_RXNE_RXFNE)
-	{
-		data[dataCounter++] = USART2->RDR;
-		if (dataCounter == 3)
-		{
-			dataCounter = 0;
-			if (data[0] == 2 && data[1] == 1 && data[2] == 0x7f)
-			{
-				wait=200;
-				tempSettings = *settingPage;
-				tempSettings.appByte = 0xAA;
-				tempSettings.validApp = 0x01;
-				Flash_write();
-				for(int i=0;i<10;i++);
-				NVIC_SystemReset();
-			}
-			else if(data[0] == 2 && data[1] == 1 && data[2] == 0x1f)
-			{
-				HAL_UART_Transmit(&huart2, (uint8_t*)SETTING_PAGE_ADDRESS, FLASH_PAGE_SIZE, 100);
-			}
-		}
-	}
-  /* USER CODE END USART2_IRQn 0 */
-  HAL_UART_IRQHandler(&huart2);
-  /* USER CODE BEGIN USART2_IRQn 1 */
-
-  /* USER CODE END USART2_IRQn 1 */
-}
 
 /* USER CODE BEGIN 1 */
 

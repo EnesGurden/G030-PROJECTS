@@ -36,7 +36,7 @@ extern "C" {
 void saveAppByte(void);
 
 #define SETTING_PAGE_ADDRESS 0x08007680
-#define APP_ADDRESS 0x08002000
+//#define APP_ADDRESS 0x08002000
 
 typedef struct settings {
 	uint32_t appByte;
@@ -73,8 +73,14 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define led_Pin GPIO_PIN_0
-#define led_GPIO_Port GPIOA
+#define SR_LATCH_Pin GPIO_PIN_15
+#define SR_LATCH_GPIO_Port GPIOC
+#define SR_DATA_Pin GPIO_PIN_2
+#define SR_DATA_GPIO_Port GPIOA
+#define SR_CLK_Pin GPIO_PIN_3
+#define SR_CLK_GPIO_Port GPIOA
+#define SR_OE_Pin GPIO_PIN_13
+#define SR_OE_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
