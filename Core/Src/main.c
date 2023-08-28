@@ -16,7 +16,7 @@
   *
   ******************************************************************************
   */
-const char application_info[80] = "G030 NCP0202 Led Blinking Revision 1.0 Date: 23/08/2023  ";
+const char application_info[80] = "G030 NCP0202 UART and SR_DATA&SR_CLK Revision 1.0 Date: 28/08/2023  ";
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -83,8 +83,47 @@ typedef union
 } payload_SR_Led_struct;
 payload_SR_Led_struct payload_SR_Led = {.Data=0};
 
+uint8_t once = 1;
+#define ENABLE_UART 0
+#define ENABLE_SHIFT 1
+void setUartPins(uint8_t enable)
+{
+	GPIO_InitTypeDef GPIO_InitStruct = {0};
+	switch(enable)
+	{
+	case ENABLE_UART:
+		if( once == 1)
+		{
+			once=0;
+			HAL_GPIO_DeInit(GPIOA, GPIO_PIN_3|GPIO_PIN_2);
+			MX_USART2_UART_Init();
+		}
+		break;
+	case ENABLE_SHIFT:
+		if( once == 0)
+		{
+			once=1;
+			HAL_UART_DeInit(&huart2);
+      /*Configure GPIO pin Output Level */
+  	  HAL_GPIO_WritePin(GPIOA, SR_DATA_Pin, GPIO_PIN_SET);
+  	  /*Configure GPIO pin Output Level */
+  	  HAL_GPIO_WritePin(GPIOA, SR_CLK_Pin, GPIO_PIN_RESET);
+  	  /*Configure GPIO pins : SR_DATA_Pin SR_CLK_Pin */
+  	  GPIO_InitStruct.Pin = SR_DATA_Pin|SR_CLK_Pin;
+  	  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  	  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  	  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  	  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+		}
+		break;
+	default:
+		break;
+	}
+}
+
 void writeShift()
 {
+  setUartPins(ENABLE_SHIFT);
   HAL_GPIO_WritePin(SR_OE_GPIO_Port, SR_OE_Pin, GPIO_PIN_SET);
   for (int i = 15; i >= 0; i--)
   {
@@ -99,6 +138,7 @@ void writeShift()
 	HAL_GPIO_WritePin(SR_LATCH_GPIO_Port, SR_LATCH_Pin, GPIO_PIN_RESET);
 	HAL_GPIO_WritePin(SR_LATCH_GPIO_Port, SR_LATCH_Pin, GPIO_PIN_SET);
 	HAL_GPIO_WritePin(SR_OE_GPIO_Port, SR_OE_Pin, GPIO_PIN_RESET);
+  setUartPins(ENABLE_UART);
 }
 
 
@@ -337,7 +377,7 @@ static void MX_USART2_UART_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN USART2_Init 2 */
-
+  __HAL_UART_ENABLE_IT(&huart2,UART_IT_RXFNE);
   /* USER CODE END USART2_Init 2 */
 
 }

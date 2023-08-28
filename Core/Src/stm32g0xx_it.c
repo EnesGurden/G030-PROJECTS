@@ -27,11 +27,6 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN TD */
-uint8_t data[5], dataCounter = 0;
-
-
-
-
 settings_t *settingPage = (settings_t*) SETTING_PAGE_ADDRESS;
 settings_t tempSettings;
 
@@ -96,6 +91,8 @@ void Flash_write()
 
 	HAL_FLASH_Lock();
 }
+
+uint8_t data[5], dataCounter=0;
 /* USER CODE END TD */
 
 /* Private define ------------------------------------------------------------*/
@@ -194,7 +191,10 @@ void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
-
+	static uint32_t dataCounterReset=0;
+	dataCounterReset++;
+	if(dataCounterReset%2000==0)
+		dataCounter=0;
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
@@ -216,6 +216,29 @@ void USART2_IRQHandler(void)
 {
   /* USER CODE BEGIN USART2_IRQn 0 */
 
+	if (USART2->ISR & USART_ISR_RXNE_RXFNE)
+	{
+		data[dataCounter++] = USART2->RDR;
+		if (dataCounter == 3)
+		{
+			dataCounter = 0;
+			if (data[0] == 2 && data[1] == 1 && data[2] == 0x7f)
+			{
+				tempSettings = *settingPage;
+				tempSettings.appByte = 0xAA;
+				tempSettings.validApp = 0x01;
+				Flash_write();
+//				char a[]={03,0x7f};
+//				HAL_UART_Transmit(&huart2, (uint8_t*) a, 2, 100);
+				HAL_Delay(20);
+				NVIC_SystemReset();
+			}
+			else if(data[0] == 2 && data[1] == 1 && data[2] == 0x1f)
+			{
+				HAL_UART_Transmit(&huart2, (uint8_t*)SETTING_PAGE_ADDRESS, FLASH_PAGE_SIZE, 100);
+			}
+		}
+	}
   /* USER CODE END USART2_IRQn 0 */
   HAL_UART_IRQHandler(&huart2);
   /* USER CODE BEGIN USART2_IRQn 1 */
