@@ -16,7 +16,7 @@
   *
   ******************************************************************************
   */
-const char application_info[80] = "G030 MC83 Relay CB Led Blinking and Uart Rev 1.0 Date: 23/08/2023";
+const char application_info[80] = "G030 MC83 Relay CB Led Blinking and Uart Rev 1.0 Date: 28/08/2023";
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -165,15 +165,15 @@ int main(void)
   MX_TIM1_Init();
   MX_TIM3_Init();
 //  MX_IWDG_Init();
-  MX_RTC_Init();
+//  MX_RTC_Init();
   /* USER CODE BEGIN 2 */
-  HAL_DBGMCU_DisableDBGStandbyMode();
+//  HAL_DBGMCU_DisableDBGStandbyMode();
 
   tempSettings = *settingPage;
   tempSettings.validApp = 0x02;
   Flash_write();
 
-  setOptionBytes();
+//  setOptionBytes();
 //  HAL_UART_Transmit(&huart2, (uint8_t*)settingPage, 1000, 100);
   /* USER CODE END 2 */
 
