@@ -43,6 +43,8 @@ const char application_info[80] = "G030 NCP0202 Led Blinking Revision 1.0 Date: 
 /* Private variables ---------------------------------------------------------*/
 RTC_HandleTypeDef hrtc;
 
+UART_HandleTypeDef huart2;
+
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -51,6 +53,7 @@ RTC_HandleTypeDef hrtc;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_RTC_Init(void);
+static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
 void Flash_write();
 /* USER CODE END PFP */
@@ -189,14 +192,15 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_RTC_Init();
+  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  HAL_DBGMCU_DisableDBGStandbyMode();
+//  HAL_DBGMCU_DisableDBGStandbyMode();
 
   tempSettings = *settingPage;
   tempSettings.validApp = 0x02;
   Flash_write();
 
-  setOptionBytes();
+//  setOptionBytes();
 //  HAL_UART_Transmit(&huart2, (uint8_t*)settingPage, 1000, 100);
   /* USER CODE END 2 */
 
@@ -303,6 +307,42 @@ static void MX_RTC_Init(void)
 }
 
 /**
+  * @brief USART2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART2_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART2_Init 0 */
+
+  /* USER CODE END USART2_Init 0 */
+
+  /* USER CODE BEGIN USART2_Init 1 */
+
+  /* USER CODE END USART2_Init 1 */
+  huart2.Instance = USART2;
+  huart2.Init.BaudRate = 115200;
+  huart2.Init.WordLength = UART_WORDLENGTH_8B;
+  huart2.Init.StopBits = UART_STOPBITS_1;
+  huart2.Init.Parity = UART_PARITY_NONE;
+  huart2.Init.Mode = UART_MODE_TX_RX;
+  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
+  huart2.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+  huart2.Init.ClockPrescaler = UART_PRESCALER_DIV1;
+  huart2.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  if (HAL_UART_Init(&huart2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART2_Init 2 */
+
+  /* USER CODE END USART2_Init 2 */
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -319,7 +359,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(SR_LATCH_GPIO_Port, SR_LATCH_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, SR_DATA_Pin|SR_CLK_Pin|SR_OE_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(SR_OE_GPIO_Port, SR_OE_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : SR_LATCH_Pin */
   GPIO_InitStruct.Pin = SR_LATCH_Pin;
@@ -328,12 +368,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(SR_LATCH_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : SR_DATA_Pin SR_CLK_Pin SR_OE_Pin */
-  GPIO_InitStruct.Pin = SR_DATA_Pin|SR_CLK_Pin|SR_OE_Pin; // |SR_OE_Pin
+  /*Configure GPIO pin : SR_OE_Pin */
+  GPIO_InitStruct.Pin = SR_OE_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+  HAL_GPIO_Init(SR_OE_GPIO_Port, &GPIO_InitStruct);
 
 }
 

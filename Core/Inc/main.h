@@ -75,14 +75,13 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define SR_LATCH_Pin GPIO_PIN_15
 #define SR_LATCH_GPIO_Port GPIOC
+#define SR_OE_Pin GPIO_PIN_13
+#define SR_OE_GPIO_Port GPIOA
+/* USER CODE BEGIN Private defines */
 #define SR_DATA_Pin GPIO_PIN_2
 #define SR_DATA_GPIO_Port GPIOA
 #define SR_CLK_Pin GPIO_PIN_3
 #define SR_CLK_GPIO_Port GPIOA
-#define SR_OE_Pin GPIO_PIN_13
-#define SR_OE_GPIO_Port GPIOA
-/* USER CODE BEGIN Private defines */
-
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
