@@ -196,7 +196,10 @@ void PendSV_Handler(void)
 void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
-
+	static uint32_t onems=0;
+	onems++;
+	if(onems%2000==0)
+		dataCounter=0;
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
@@ -265,7 +268,7 @@ void USART2_IRQHandler(void)
 			dataCounter = 0;
 			if (data[0] == 2 && data[1] == 1 && data[2] == 0x7f)
 			{
-				wait=200;
+				wait=2000;
 				tempSettings = *settingPage;
 				tempSettings.appByte = 0xAA;
 				tempSettings.validApp = 0x01;
@@ -275,6 +278,7 @@ void USART2_IRQHandler(void)
 			}
 			else if(data[0] == 2 && data[1] == 1 && data[2] == 0x1f)
 			{
+				wait=4000;
 				HAL_UART_Transmit(&huart2, (uint8_t*)SETTING_PAGE_ADDRESS, FLASH_PAGE_SIZE, 100);
 			}
 		}
