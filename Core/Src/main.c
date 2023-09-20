@@ -104,14 +104,10 @@ void setUartPins(uint8_t enable)
 		{
 			once=1;
 			HAL_UART_DeInit(&huart2);
-      /*Configure GPIO pin Output Level */
-  	  HAL_GPIO_WritePin(GPIOA, SR_DATA_Pin, GPIO_PIN_SET);
-  	  /*Configure GPIO pin Output Level */
-  	  HAL_GPIO_WritePin(GPIOA, SR_CLK_Pin, GPIO_PIN_RESET);
   	  /*Configure GPIO pins : SR_DATA_Pin SR_CLK_Pin */
   	  GPIO_InitStruct.Pin = SR_DATA_Pin|SR_CLK_Pin;
   	  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  	  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  	  GPIO_InitStruct.Pull = GPIO_PULLUP;
   	  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   	  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 		}
@@ -240,6 +236,9 @@ int main(void)
   tempSettings.validApp = 0x02;
   Flash_write();
 
+  setUartPins(ENABLE_SHIFT);
+  setUartPins(ENABLE_UART);
+
 //  setOptionBytes();
 //  HAL_UART_Transmit(&huart2, (uint8_t*)settingPage, 1000, 100);
   /* USER CODE END 2 */
@@ -248,12 +247,21 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  payload_SR_Led.Data=0;
-	  writeShift();
-	  HAL_Delay(500);
-	  payload_SR_Led.Data=0xfff;
-	  writeShift();
-	  HAL_Delay(500);
+//	  setUartPins(ENABLE_SHIFT);
+//	  payload_SR_Led.Data=62;
+//	  writeShift();
+//	  HAL_Delay(500);
+//	  payload_SR_Led.Data=0x0;
+//	  writeShift();
+//	  HAL_Delay(500);
+//	  setUartPins(ENABLE_UART);
+//	  char a[]="\r\nEnes";
+//	  HAL_UART_Transmit(&huart2, (uint8_t*) a, sizeof(a), 100);
+//	  HAL_Delay(500);
+	  if(HAL_GPIO_ReadPin(SR_CLK_GPIO_Port, SR_CLK_Pin) == 0)
+	  {
+		  asm("nop");
+	  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -413,7 +421,7 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(SR_OE_GPIO_Port, &GPIO_InitStruct);
+//  HAL_GPIO_Init(SR_OE_GPIO_Port, &GPIO_InitStruct);
 
 }
 

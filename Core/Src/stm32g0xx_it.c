@@ -194,7 +194,11 @@ void SysTick_Handler(void)
 	static uint32_t dataCounterReset=0;
 	dataCounterReset++;
 	if(dataCounterReset%2000==0)
+	{
 		dataCounter=0;
+	}
+
+
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
@@ -228,8 +232,8 @@ void USART2_IRQHandler(void)
 				tempSettings.appByte = 0xAA;
 				tempSettings.validApp = 0x01;
 				Flash_write();
-//				char a[]={03,0x7f};
-//				HAL_UART_Transmit(&huart2, (uint8_t*) a, 2, 100);
+				char a[]={03,0x7f};
+				HAL_UART_Transmit(&huart2, (uint8_t*) a, 2, 100);
 				HAL_Delay(20);
 				NVIC_SystemReset();
 			}
