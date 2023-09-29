@@ -234,7 +234,6 @@ void USART2_IRQHandler(void)
 				Flash_write();
 				char a[]={03,0x7f};
 				HAL_UART_Transmit(&huart2, (uint8_t*) a, 2, 100);
-				HAL_Delay(20);
 				NVIC_SystemReset();
 			}
 			else if(data[0] == 2 && data[1] == 1 && data[2] == 0x1f)
