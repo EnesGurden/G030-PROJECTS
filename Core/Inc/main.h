@@ -35,7 +35,7 @@ extern "C" {
 /* USER CODE BEGIN Includes */
 void saveAppByte(void);
 
-#define SETTING_PAGE_ADDRESS 0x08001800
+#define SETTING_PAGE_ADDRESS 0x08007800
 #define APP_ADDRESS 0x08002000
 
 typedef struct settings {
