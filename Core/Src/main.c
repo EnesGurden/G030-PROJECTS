@@ -21,6 +21,7 @@ const char application_info[80] =
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "random.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -53,7 +54,6 @@ UART_HandleTypeDef huart2;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_RTC_Init(void);
 static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
 void Flash_write();
@@ -238,11 +238,12 @@ int main(void)
 //  Flash_write();
 	while(1)
 	{
+		payload_SR_Led.Data=a(1);
 		writeShift();
-		HAL_Delay(1);
-//		HAL_Delay(100);
-//		setUartPins(ENABLE_UART);
-//		HAL_Delay(100);
+		HAL_Delay(500);
+		payload_SR_Led.Data=a(0xfff);
+		writeShift();
+		HAL_Delay(500);
 	}
 
 //  setOptionBytes();
@@ -333,36 +334,7 @@ void SystemClock_Config(void)
  * @param None
  * @retval None
  */
-static void MX_RTC_Init(void)
-{
 
-	/* USER CODE BEGIN RTC_Init 0 */
-
-	/* USER CODE END RTC_Init 0 */
-
-	/* USER CODE BEGIN RTC_Init 1 */
-
-	/* USER CODE END RTC_Init 1 */
-	/** Initialize RTC Only
-	 */
-	hrtc.Instance = RTC;
-	hrtc.Init.HourFormat = RTC_HOURFORMAT_24;
-	hrtc.Init.AsynchPrediv = 127;
-	hrtc.Init.SynchPrediv = 255;
-	hrtc.Init.OutPut = RTC_OUTPUT_DISABLE;
-	hrtc.Init.OutPutRemap = RTC_OUTPUT_REMAP_NONE;
-	hrtc.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
-	hrtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
-	hrtc.Init.OutPutPullUp = RTC_OUTPUT_PULLUP_NONE;
-	if(HAL_RTC_Init(&hrtc) != HAL_OK)
-	{
-		Error_Handler();
-	}
-	/* USER CODE BEGIN RTC_Init 2 */
-
-	/* USER CODE END RTC_Init 2 */
-
-}
 
 /**
  * @brief USART2 Initialization Function
